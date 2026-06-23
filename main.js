@@ -128,7 +128,7 @@ function classificaSenha(tamanhoAlfabeto) {
         forcaSenha.classList.add('super-forte');
     } else if (entropia > 52) {
         forcaSenha.classList.add('forte');
-    } else if (entropia > 50) {
+    } else if (entropia > 47) {
         forcaSenha.classList.add('media');
     } else {
         forcaSenha.classList.add('fraca');
