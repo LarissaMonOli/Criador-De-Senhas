@@ -115,18 +115,20 @@ function geraSenha() {
 }
 
 // ============================================
-// AULA 3 + AULA 8: CLASSIFICAÇÃO DE FORÇA
+// AULA 3 + AULA 8: CLASSIFICAÇÃO DE FORÇA (AJUSTADA)
 // ============================================
 function classificaSenha(tamanhoAlfabeto) {
     let entropia = tamanhoSenha * Math.log2(tamanhoAlfabeto);
     
     forcaSenha.classList.remove('fraca', 'media', 'forte', 'super-forte');
     
-    if (entropia > 80) {
+    // LIMITES AJUSTADOS: Antes eram 35, 57 e 80.
+    // Agora uma entropia acima de 55 já é considerada Super Forte!
+    if (entropia > 55) {
         forcaSenha.classList.add('super-forte');
-    } else if (entropia > 57) {
+    } else if (entropia > 38) {
         forcaSenha.classList.add('forte');
-    } else if (entropia > 35) {
+    } else if (entropia > 22) {
         forcaSenha.classList.add('media');
     } else {
         forcaSenha.classList.add('fraca');
@@ -137,7 +139,9 @@ function classificaSenha(tamanhoAlfabeto) {
     const anos = Math.floor(dias / 365);
     
     if (dias > 365) {
-        valorEntropia.textContent = `🛡️ Um computador pode levar aproximadamente ${anos} anos para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
+        // Formata o número para ficar mais legível (ex: 173.846.450)
+        const anosFormatados = anos.toLocaleString('pt-BR');
+        valorEntropia.textContent = `🛡️ Um computador pode levar aproximadamente ${anosFormatados} anos para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
     } else if (dias > 1) {
         valorEntropia.textContent = `⏳ Um computador pode levar aproximadamente ${dias} dias para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
     } else {
