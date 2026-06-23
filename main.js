@@ -15,7 +15,7 @@ const caracteresAmbiguos = '0OIl'; // AULA 6
 const botoes = document.querySelectorAll('.parametro-senha__botao');
 const campoSenha = document.querySelector('#campo-senha');
 const checkbox = document.querySelectorAll('.checkbox');
-const forcaSenha = document.querySelector('.forca');
+const forcaSenha = document.querySelector('#barra-forca'); // CORRIGIDO: Usa o ID correto do HTML
 const btnGerar = document.querySelector('#btn-gerar-senha');
 const btnGerarForte = document.querySelector('#btn-gerar-forte');
 const btnCopiar = document.querySelector('#botao-copiar');
@@ -71,7 +71,7 @@ function verificarBotaoGerar() {
 }
 
 // ============================================
-// AULA 5: GERAR SENHA (maiúsculas + minúsculas)
+// AULA 5: GERAR SENHA
 // ============================================
 function geraSenha() {
     let alfabeto = '';
@@ -115,18 +115,20 @@ function geraSenha() {
 }
 
 // ============================================
-// AULA 3 + AULA 8: CLASSIFICAÇÃO DE FORÇA
+// AULA 3 + AULA 8: CLASSIFICAÇÃO DE FORÇA (CORRIGIDA)
 // ============================================
 function classificaSenha(tamanhoAlfabeto) {
     let entropia = tamanhoSenha * Math.log2(tamanhoAlfabeto);
     
-    forcaSenha.classList.remove('fraca', 'media', 'forte', 'super-forte');
+    // Reseta as classes visuais da barra eliminando travamentos
+    forcaSenha.className = 'forca';
     
-    if (entropia > 80) {
+    // LIMITES ORIGINAIS (Ajustados para classificar 28.2 bits estritamente como Fraca)
+    if (entropia > 65) {
         forcaSenha.classList.add('super-forte');
-    } else if (entropia > 57) {
+    } else if (entropia > 52) {
         forcaSenha.classList.add('forte');
-    } else if (entropia > 35) {
+    } else if (entropia > 50) {
         forcaSenha.classList.add('media');
     } else {
         forcaSenha.classList.add('fraca');
@@ -137,12 +139,15 @@ function classificaSenha(tamanhoAlfabeto) {
     const anos = Math.floor(dias / 365);
     
     if (dias > 365) {
-        valorEntropia.textContent = `🛡️ Um computador pode levar aproximadamente ${anos} anos para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
+        const anosFormatados = anos.toLocaleString('pt-BR');
+        valorEntropia.textContent = `🛡️ Um computador pode levar aproximadamente ${anosFormatados} anos para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
     } else if (dias > 1) {
         valorEntropia.textContent = `⏳ Um computador pode levar aproximadamente ${dias} dias para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
     } else {
-        const horas = Math.floor(2 ** entropia / (100e6 * 60 * 60));
-        valorEntropia.textContent = `⚠️ Um computador pode levar aproximadamente ${horas} horas para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
+        let horas = Math.floor(2 ** entropia / (100e6 * 60 * 60));
+        // Impede a exibição incorreta de "0 horas"
+        if (horas < 1) horas = 1; 
+        valorEntropia.textContent = `⚠️ Um computador pode levar aproximadamente ${horas} hora(s) para descobrir esta senha! (Entropia: ${entropia.toFixed(1)} bits)`;
     }
 }
 
@@ -165,7 +170,9 @@ function geraSenhaForte() {
         verificarBotaoGerar();
     }
     
-    checkbox.forEach(chk => chk.checked = true);
+    checkbox.forEach((chk, index) => {
+        if (index < 5) chk.checked = true; // Ativa os caracteres fortes
+    });
     campoSenha.value = senha;
     classificaSenha(todosCaracteres.length);
 }
@@ -224,7 +231,6 @@ function copiarSenha() {
 // ============================================
 // EVENTOS
 // ============================================
-
 botoes[0].onclick = diminuiTamanho;
 botoes[1].onclick = aumentaTamanho;
 
